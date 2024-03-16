@@ -13,9 +13,6 @@ document.addEventListener('DOMContentLoaded', function () {
 
 
 
-
-
-
 function addBook() {
   const bookTitle = document.getElementById('InputTitle').value;
   const bookWriter = document.getElementById('InputWriter').value;
@@ -43,9 +40,13 @@ function generateBookObject(id, title, writer, year, isCompleted) {
 }
 
 const books = [];
+const temp = []
 const RENDER_EVENT = 'render-book';
 
-document.addEventListener(RENDER_EVENT, function () {
+document.addEventListener(RENDER_EVENT, function (e) {
+  // if(e.bookTarget){
+  //   console.log(e.bookTarget.x);
+  // }
   const uncompletedBOOKList = document.getElementById('books');
   uncompletedBOOKList.innerHTML = '';
 
@@ -53,6 +54,11 @@ document.addEventListener(RENDER_EVENT, function () {
   completedBOOKList.innerHTML = '';
  
   for (const bookItem of books) {
+    // if(e.bookTarget){
+    //   if(e.bookTarget.x.title !== bookItem){
+    //     continue;
+    //   }
+    // }
     const bookElement = makeBook(bookItem);
     if(!bookItem.isCompleted){
         uncompletedBOOKList.append(bookElement);
@@ -132,23 +138,22 @@ function makeBook(bookObject) {
 
 
 function findBookByTitle(){
-    const bookTitle = document.getElementById('InputTitleSearch').value;
-    let hide = document.getElementsByClassName('item');
+    const bookTitle = document.getElementById('InputTitleSearch').value.toLowerCase();
+    const nodeList = document.querySelectorAll(".item");
 
-    const bookTarget = books.filter(book => book.title.toLowerCase().includes(bookTitle.toLowerCase()));
-    console.log(bookTarget);
-    
-    document.dispatchEvent(new Event(RENDER_EVENT));
-}
-
-function findBookTitle(bookTitle,letter) {
-    for (const bookItem of books) {
-    if (bookItem.title.toLowerCase().includes(bookTitle)) {
-      return bookItem;
+    if (bookTitle == "") {
+        document.dispatchEvent(new Event(RENDER_EVENT));
+        return;
     }
-  }
-  return null;
+    for(let i = 0; i< books.length;i++){
+        if(books[i].title.toLowerCase().includes(bookTitle)){
+            nodeList[i].style.display= "block";
+        }else{
+            nodeList[i].style.display= "none";
+        }
+    }
 }
+
 
 
 function addTaskToCompleted (bookId) {
